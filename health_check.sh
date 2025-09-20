@@ -2,9 +2,10 @@
 
 SITE_URL="https://khlug.org"
 DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
+OUTPUT_FILE="output.txt"
 
 check_site() {
-    response=$(curl -s -o /dev/null -w "%{http_code}" -I -m 10 $SITE_URL)
+    response=$(curl -s -o "$OUTPUT_FILE" -w "%{http_code}" -I -m 30 $SITE_URL)
     curl_exit_code=$?
     current_time=$(TZ="Asia/Seoul" date "+%Y-%m-%d %H:%M:%S")
     
@@ -16,9 +17,15 @@ check_site() {
             message="🔴 **경고:** 사이트가 정상 응답을 못 하고 있어요! (status_code=$response) ($current_time)"
         fi
         
+        output=$(cat $OUTPUT_FILE)
+        output_with_code_block="\`\`\`$output\`\`\`"
+        request=$(jq -Rn --arg msg "$message$output_with_code_block" '{content: $msg}')
+        echo "$request"
+
         # Discord에 알림 전송
-        curl -H "Content-Type: application/json" -d "{\"content\": \"$message\"}" $DISCORD_WEBHOOK_URL
+        curl -H "Content-Type: application/json" -d "$request" $DISCORD_WEBHOOK_URL
         echo "$message"
+        echo "$output"
         exit 1
     else
         echo "✅ $SITE_URL 사이트 정상 작동 중 (응답 코드: $response) - $current_time"
