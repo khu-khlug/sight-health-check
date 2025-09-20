@@ -17,13 +17,10 @@ check_site() {
             message="🔴 **경고:** 사이트가 정상 응답을 못 하고 있어요! (status_code=$response) ($current_time)"
         fi
         
-        output=$(cat $OUTPUT_FILE)
-        output_with_code_block="\`\`\`$output\`\`\`"
-        request=$(jq -Rn --arg msg "$message$output_with_code_block" '{content: $msg}')
-        echo "$request"
-
         # Discord에 알림 전송
-        curl -H "Content-Type: application/json" -d "$request" $DISCORD_WEBHOOK_URL
+        curl -H "Content-Type: application/json" -d "{\"content\": \"$message\"}" $DISCORD_WEBHOOK_URL
+
+        output=$(cat $OUTPUT_FILE)
         echo "$message"
         echo "$output"
         exit 1
