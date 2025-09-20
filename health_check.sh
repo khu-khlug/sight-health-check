@@ -1,8 +1,9 @@
 #!/bin/bash
 
-SITE_URL="https://khlug.org"
+SITE_URL="https://khlug.orgg"
 DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 OUTPUT_FILE="output.txt"
+GITHUB_ACTION_URL=$GITHUB_ACTION_URL
 
 check_site() {
     response=$(curl -s -o "$OUTPUT_FILE" -w "%{http_code}" -I -m 30 $SITE_URL)
@@ -16,6 +17,8 @@ check_site() {
         else
             message="🔴 **경고:** 사이트가 정상 응답을 못 하고 있어요! (status_code=$response) ($current_time)"
         fi
+
+        message="$message\n관련 액션 바로가기: $GITHUB_ACTION_URL"
         
         # Discord에 알림 전송
         curl -H "Content-Type: application/json" -d "{\"content\": \"$message\"}" $DISCORD_WEBHOOK_URL
