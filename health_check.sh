@@ -6,7 +6,7 @@ DISCORD_WEBHOOK_URL=$DISCORD_WEBHOOK_URL
 check_site() {
     response=$(curl -s -o /dev/null -w "%{http_code}" -I -m 10 $SITE_URL)
     curl_exit_code=$?
-    current_time=$(TZ="Asia/Seoul", date "+%Y-%m-%d %H:%M:%S")
+    current_time=$(TZ="Asia/Seoul" date "+%Y-%m-%d %H:%M:%S")
     
     # 200 응답이 아니면 오류로 간주
     if [ "$response" != "200" ]; then
