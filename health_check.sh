@@ -6,7 +6,7 @@ OUTPUT_FILE="output.txt"
 GITHUB_ACTION_URL=$GITHUB_ACTION_URL
 
 check_site() {
-    response=$(curl -s -o "$OUTPUT_FILE" -w "%{http_code}" -I -m 30 $SITE_URL)
+    response=$(curl -L -s -o "$OUTPUT_FILE" -w "%{http_code}" -I -m 30 $SITE_URL)
     curl_exit_code=$?
     current_time=$(TZ="Asia/Seoul" date "+%Y-%m-%d %H:%M:%S")
     
